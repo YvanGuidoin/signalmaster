@@ -1,9 +1,16 @@
 var socketIO = require('socket.io'),
-    uuid = require('node-uuid'),
-    crypto = require('crypto');
+    uuid = require('uuid/v1'),
+    crypto = require('crypto'),
+    yetify = require('yetify');
 
 module.exports = function (server, config) {
-    var io = socketIO.listen(server);
+    var path = process.env.SOCKETIO_PATH || config.server.path;
+
+    var io = socketIO.listen(server, {
+        path: path,
+        serveClient: config.server.serveClient
+    });
+    console.log(yetify.logo() + ' -- signal master listening on path: ' + path);
 
     io.sockets.on('connection', function (client) {
         client.resources = {

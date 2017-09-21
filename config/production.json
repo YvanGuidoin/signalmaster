@@ -3,10 +3,12 @@
   "server": {
     "port": 8888,
     "/* secure */": "/* whether this connects via https */",
-    "secure": true,
+    "secure": false,
     "key": "config/sslcerts/key.pem",
     "cert": "config/sslcerts/cert.pem",
-    "password": null
+    "password": null,
+    "path": "/socket.io",
+    "serveClient": true
   },
   "rooms": {
     "/* maxClients */": "/* maximum number of clients per room. 0 = no limit */",
