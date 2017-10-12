@@ -1,6 +1,8 @@
-FROM node:8
+FROM node:8-alpine
 
-RUN groupadd -r nodejs && useradd -m -r -g nodejs nodejs
+RUN apk add --no-cache make gcc g++ python
+
+RUN addgroup -S nodejs && adduser -S -g nodejs nodejs
 USER nodejs
 
 ENV NODE_ENV=production
