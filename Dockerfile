@@ -15,4 +15,10 @@ COPY package-lock.json $APP_DIR
 RUN npm i --quiet
 COPY . $APP_DIR
 
+USER root
+RUN apk del make gcc g++ python
+USER nodejs
+
+ENTRYPOINT node server.js
+
 CMD ["node", "server.js"]
