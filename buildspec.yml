@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - eval $(aws ecr get-login --no-include-email --region eu-west-1)
+  build:
+    commands:
+      - docker build -t signalmaster .
+  post_build:
+    commands:
+      - docker tag signalmaster:latest $ECR_IMAGE
+      - docker push $ECR_IMAGE
