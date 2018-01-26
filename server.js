@@ -1,35 +1,39 @@
-/*global console*/
-var yetify = require('yetify'),
-    config = require('getconfig'),
-    fs = require('fs'),
-    sockets = require('./sockets'),
-    port = parseInt(process.env.PORT || config.server.port, 10),
-    server_handler = function (req, res) {
-        res.writeHead(404);
-        res.end();
-    },
-    server = null;
+const fs = require("fs"),
+  sockets = require("./sockets"),
+  http = require("http");
 
-// Create an http(s) server instance to that socket.io can listen to
-if (config.server.secure) {
-    server = require('https').Server({
-        key: fs.readFileSync(config.server.key),
-        cert: fs.readFileSync(config.server.cert),
-        passphrase: config.server.password
-    }, server_handler);
-} else {
-    server = require('http').Server(server_handler);
-}
-server.listen(port);
+const config = {
+  server: {
+    port: parseInt(process.env.PORT, 10) || 8888,
+    secure: false,
+    path: process.env.SOCKETIO_PATH || "/socket.io",
+    serveClient: true
+  },
+  rooms: {
+    maxClients: 0
+  },
+  stunservers: [
+    {
+      urls: process.env.STUN || "stun:stun.l.google.com:19302"
+    }
+  ],
+  turnservers: [
+    // {
+    //   urls: ["turn:your.turn.servers.here"],
+    //   secret: "turnserversharedsecret",
+    //   expiry: 86400
+    // }
+  ]
+};
+
+const server_handler = function(req, res) {
+  res.writeHead(200);
+  res.end();
+};
+const server = http.Server(server_handler);
+server.listen(config.server.port);
 
 sockets(server, config);
 
-if (config.uid) process.setuid(config.uid);
-
-var httpUrl;
-if (config.server.secure) {
-    httpUrl = "https://localhost:" + port;
-} else {
-    httpUrl = "http://localhost:" + port;
-}
-console.log(yetify.logo() + ' -- signal master is running at: ' + httpUrl);
+const httpUrl = "http://localhost:" + config.server.port;
+console.log("signal master is running at: " + httpUrl);
